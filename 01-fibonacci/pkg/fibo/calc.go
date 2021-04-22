@@ -1,7 +1,7 @@
 package fibo
 
 // Value of the fibonacci number at the index
-func Calc(n int) int {
+func Num(n int) int {
 	if n <= 2 {
 		return 1
 	}
