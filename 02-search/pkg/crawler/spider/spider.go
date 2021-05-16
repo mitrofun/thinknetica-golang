@@ -10,13 +10,13 @@ import (
 
 	"golang.org/x/net/html"
 
-	"go-core-2/GoSearch/pkg/crawler"
+	"search/pkg/crawler"
 )
 
 // Service - служба поискового робота.
 type Service struct{}
 
-// New - констрктор службы поискового робота.
+// New - конструктор службы поискового робота.
 func New() *Service {
 	s := Service{}
 	return &s
