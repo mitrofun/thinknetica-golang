@@ -43,7 +43,6 @@ func main() {
 	i := index.New()
 	docs, err := scan(urls, *i)
 	if err != nil {
-		log.Fatal(err)
 		return
 	}
 
