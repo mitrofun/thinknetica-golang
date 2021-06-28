@@ -10,22 +10,20 @@ import (
 )
 
 var urls = []string{"https://golang.org", "https://go.dev"}
-var scanIndex = index.Index{}
 
-func scan(urls []string) ([]crawler.Document, error) {
-	var result [] crawler.Document
+func scan(urls []string, idx index.Service) ([]crawler.Document, error) {
+	var result []crawler.Document
 	var counter = 0
 	s := spider.New()
-	for  _, url := range urls {
+	for _, url := range urls {
 		docs, err := s.Scan(url, 2)
 		if err != nil {
-			log.Fatal(err)
 			return result, err
 		}
 
 		for _, item := range docs {
 			item.ID = counter
-			scanIndex.Add(item.Title, item.ID)
+			idx.Add(item.Title, item.ID)
 			result = append(result, item)
 			counter = counter + 1
 		}
@@ -42,16 +40,16 @@ func main() {
 		return
 	}
 
-	scanIndex.New()
-	docs, err  := scan(urls)
+	i := index.New()
+	docs, err := scan(urls, *i)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 
-	res:= scanIndex.Search(*query)
+	res := i.Search(*query)
 
-	for _, id:= range res {
+	for _, id := range res {
 		fmt.Printf("`%s` found in url: %s\n", *query, docs[id].URL)
 	}
 
