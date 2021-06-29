@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:9.6.22-alpine
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=movies_test
+    ports:
+      - 5434:5432
+    volumes:
+      - ./data/1-schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ./data/2-data.sql:/docker-entrypoint-initdb.d/2-data.sql
+      - movies_data:/var/lib/postgresql/data
+
+volumes:
+  movies_data:
