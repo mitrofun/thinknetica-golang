@@ -6,7 +6,6 @@ import (
 	"index/pkg/crawler"
 	"index/pkg/crawler/spider"
 	"index/pkg/index"
-	"log"
 )
 
 var urls = []string{"https://golang.org", "https://go.dev"}
@@ -41,11 +40,7 @@ func main() {
 	}
 
 	i := index.New()
-	docs, err := scan(urls, *i)
-	if err != nil {
-		return
-	}
-
+	docs, _ := scan(urls, *i)
 	res := i.Search(*query)
 
 	for _, id := range res {
