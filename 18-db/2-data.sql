@@ -34,7 +34,7 @@ VALUES  (2, 'The Hobbit: An Unexpected Journey', 2012, 2, 1017003568, 'PG-13'),
         (7, 'Back to the Future Part II', 1989, 3, 331950002, 'PG-10');
 
 -- directors
-INSERT INTO director_movies (person_id, movie_id)
+INSERT INTO directors_movies (person_id, movie_id)
 VALUES  (13, 1),
         (13, 2),
         (13, 3),
@@ -44,7 +44,7 @@ VALUES  (13, 1),
         (16, 7);
 
 -- actors
-INSERT INTO public.actor_movies (person_id, movie_id)
+INSERT INTO actors_movies (person_id, movie_id)
 VALUES  (1, 1),
         (2, 1),
         (3, 1),
