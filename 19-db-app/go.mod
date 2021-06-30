@@ -1,4 +1,4 @@
-module 19-db-app
+module dbapp
 
 go 1.16
 

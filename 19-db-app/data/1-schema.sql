@@ -1,5 +1,5 @@
 DROP TYPE IF EXISTS rating CASCADE;
-DROP TABLE IF EXISTS company, persons, movies, actor_movies, director_movies;
+DROP TABLE IF EXISTS actors_movies, directors_movies, company, persons, movies;
 
 CREATE TYPE rating AS ENUM ('PG-10', 'PG-13', 'PG-18');
 
@@ -28,7 +28,7 @@ CREATE TABLE movies
     UNIQUE (name, release_year)
 );
 
-CREATE TABLE actor_movies
+CREATE TABLE actors_movies
 (
     id        BIGSERIAL PRIMARY KEY,
     person_id INTEGER REFERENCES persons (id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -36,7 +36,7 @@ CREATE TABLE actor_movies
     UNIQUE (person_id, movie_id)
 );
 
-CREATE TABLE director_movies
+CREATE TABLE directors_movies
 (
     id        BIGSERIAL PRIMARY KEY,
     person_id INTEGER REFERENCES persons (id) ON DELETE CASCADE ON UPDATE CASCADE,

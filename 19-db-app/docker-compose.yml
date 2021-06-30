@@ -12,7 +12,3 @@ services:
     volumes:
       - ./data/1-schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
       - ./data/2-data.sql:/docker-entrypoint-initdb.d/2-data.sql
-      - movies_data:/var/lib/postgresql/data
-
-volumes:
-  movies_data:

@@ -1,53 +1,50 @@
 package storage
 
 import (
-	"19-db-app/pkg/movies"
 	"context"
+	"dbapp/pkg/movies"
 
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 type PgStorage struct {
-	connString string
+	pool *pgxpool.Pool
 }
 
-func New(connString string) *PgStorage {
-	var pg PgStorage
-	pg.connString = connString
-	return &pg
-}
-
-func (pg *PgStorage) connect() (context.Context, *pgxpool.Pool, error) {
-	ctx := context.Background()
-	db, err := pgxpool.Connect(context.Background(), pg.connString)
-	if err != nil {
-		return nil, nil, err
+func New(pool *pgxpool.Pool) *PgStorage {
+	db := PgStorage{
+		pool: pool,
 	}
-	return ctx, db, nil
+	return &db
 }
 
-func (pg *PgStorage) GetMovies(companyId ...int) ([]movies.Movie, error) {
+
+func (pg *PgStorage) DeleteMovie(ctx context.Context, ID int) error {
+
+	sqlQuery := `DELETE FROM movies WHERE id=$1`
+	_, err := pg.pool.Exec(ctx, sqlQuery, ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+
+func (pg *PgStorage) GetMovies(ctx context.Context, companyId ...int) ([]movies.Movie, error) {
 	cId := 0
 
 	if len(companyId) > 0 {
 		cId = companyId[0]
 	}
 
-	ctx, db, err := pg.connect()
-	if err != nil {
-		return nil, err
-	}
-	defer db.Close()
-
-	var rows pgx.Rows
-	if cId > 0 {
-		sqlQuery := `SELECT id, name, release_year, gross, rating, company_id FROM movies WHERE company_id = $1`
-		rows, err = db.Query(ctx, sqlQuery, cId)
-	} else {
-		sqlQuery := `SELECT id, name, release_year, gross, rating, company_id FROM movies`
-		rows, err = db.Query(ctx, sqlQuery)
-	}
+	var (
+		rows pgx.Rows
+		err error
+	)
+	sqlQuery := `SELECT id, name, release_year, gross, rating, company_id FROM movies WHERE company_id = $1`
+	rows, err = pg.pool.Query(ctx, sqlQuery, cId)
 	if err != nil {
 		return nil, err
 	}
@@ -71,14 +68,9 @@ func (pg *PgStorage) GetMovies(companyId ...int) ([]movies.Movie, error) {
 	return res, nil
 }
 
-func (pg *PgStorage) AddMovies(movies []movies.Movie) error {
-	ctx, db, err := pg.connect()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
+func (pg *PgStorage) AddMovies(ctx context.Context, movies []movies.Movie) error {
 
-	tx, err := db.Begin(ctx)
+	tx, err := pg.pool.Begin(ctx)
 	if err != nil {
 		return err
 	}
@@ -99,30 +91,10 @@ func (pg *PgStorage) AddMovies(movies []movies.Movie) error {
 	return tx.Commit(ctx)
 }
 
-func (pg *PgStorage) ChangeMovie(ID int, m movies.Movie) error {
-	ctx, db, err := pg.connect()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
+func (pg *PgStorage) ChangeMovie(ctx context.Context, ID int, m movies.Movie) error {
 
 	sqlQuery := `UPDATE movies SET name=$1, release_year=$2, gross=$3, rating=$4, company_id=$5 where id=$6`
-	_, err = db.Exec(ctx, sqlQuery, m.Name, m.ReleaseYear, m.Gross, m.Rating, m.CompanyID, ID)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (pg *PgStorage) DeleteMovie(ID int) error {
-	ctx, db, err := pg.connect()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
-	sqlQuery := `DELETE FROM movies WHERE id=$1`
-	_, err = db.Exec(ctx, sqlQuery, ID)
+	_, err := pg.pool.Exec(ctx, sqlQuery, m.Name, m.ReleaseYear, m.Gross, m.Rating, m.CompanyID, ID)
 	if err != nil {
 		return err
 	}
