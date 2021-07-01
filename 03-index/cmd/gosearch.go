@@ -24,18 +24,18 @@ func scan(urls []string, idx index.Service) ([]crawler.Document, error) {
 			item.ID = counter
 			idx.Add(item.Title, item.ID)
 			result = append(result, item)
-			counter = counter + 1
+			counter++
 		}
 	}
 	return result, nil
 }
 
 func main() {
-	query := flag.String("s", "", "Search")
+	query := flag.String("s", "", "Search word.")
 	flag.Parse()
 
 	if *query == "" {
-		fmt.Println("Need use with flag `s` for search. For example: gosearch -s go")
+		flag.PrintDefaults()
 		return
 	}
 

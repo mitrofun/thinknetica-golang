@@ -5,7 +5,7 @@ import (
 )
 
 type Service struct {
-	words map[string][] int
+	words map[string][]int
 }
 
 func New() *Service {
