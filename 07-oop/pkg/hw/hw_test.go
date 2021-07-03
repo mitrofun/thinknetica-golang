@@ -24,6 +24,11 @@ func TestDistance(t *testing.T) {
 			args: args{0,0,0,0},
 			want: 0.0,
 		},
+		{
+			name: "#3",
+			args: args{-1,-1,-4,-5},
+			want: 5.0,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
